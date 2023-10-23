@@ -11,13 +11,30 @@ datasource db {
 }
 
 model Admin {
-  id      Int      @id @default(autoincrement())
-  name    String
-  email   String @unique
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
   password String
-  
+
   created DateTime @default(now())
   updated DateTime @default(now())
 
+  books Book[]
+}
 
+model Book {
+  id        Int     @id @default(autoincrement())
+  title     String
+  image     String
+  author    String
+  year      Int
+  price     Int
+  available Boolean @default(true)
+
+  adminId Int
+
+  created DateTime @default(now())
+  updated DateTime @default(now())
+
+  admin Admin @relation(fields: [adminId], references: [id])
 }
