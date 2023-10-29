@@ -7,64 +7,67 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Admin {
-  id        Int        @id @default(autoincrement())
-  name      String
-  email     String     @unique
-  password  String
-
-  staff     Staff[]
-  customers Customer[]
-}
-
-model Staff {
   id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
   password String
 
-  adminId  Int
-  admin    Admin  @relation(fields: [adminId], references: [id])
+  created DateTime @default(now())
+  updated DateTime @default(now())
 
-  books     Book[]
-  customers Customer[]
+  books Book[]
 }
 
 model Customer {
-  id         Int         @id @default(autoincrement())
-  name       String
-  username   String      @unique
-  borrowings Borrowing[]
-  adminId    Int?
-  staffId    Int
+  id    Int    @id @default(autoincrement())
+  name  String
+  username String  @unique// Add the username field
 
-  Admin Admin? @relation(fields: [adminId], references: [id])
-  staff Staff  @relation(fields: [staffId], references: [id])
+  borrwing Borrowing[]
 }
 
+// Define your models
 model Book {
-  id          Int       @id @default(autoincrement())
-  title       String
-  author      String
-  isAvailable Boolean   @default(true)
-  dueDate     DateTime?
+  id      Int    @id @default(autoincrement())
+  title   String
+  status  String
+  price   Float
+  adminId Int
 
-  staff      Staff[]
-  borrowings Borrowing[]
+  created  DateTime    @default(now())
+  updated  DateTime    @default(now())
+  admin    Admin       @relation(fields: [adminId], references: [id])
+  borrwing Borrowing[]
 }
 
 model Borrowing {
-  id       Int      @id @default(autoincrement())
-  userId   Int
-  bookId   Int
-  dueDate  DateTime
-  returned Boolean  @default(false)
-  lateFee  Float?
+  id         Int       @id @default(autoincrement())
+  bookId     Int
+  customerId Int
+  borrowedAt DateTime
+  returnedAt DateTime?
 
-  customer Customer @relation(fields: [userId], references: [id])
+  created  DateTime @default(now())
+  updated  DateTime @default(now())
+  
+  customer Customer @relation(fields: [customerId], references: [id])
   book     Book     @relation(fields: [bookId], references: [id])
+
+  transaction Transaction[]
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+
+  borrowingId Int
+  amount      Float
+
+  created DateTime @default(now())
+  updated DateTime @default(now())
+
+  borrowing Borrowing @relation(fields: [borrowingId], references: [id])
 }

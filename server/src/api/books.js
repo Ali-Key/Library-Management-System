@@ -38,37 +38,45 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Create a new book
 router.post("/", authenticate, async (req, res) => {
-  const { title, author, isAvailable, dueDate } = req.body;
+  console.log(req.body)
+  const { title,  status, price, adminId } = req.body;
+  
+ 
+
 
   try {
     const newBook = await prisma.book.create({
       data: {
         title: title,
-        author: author,
-        is_available: isAvailable,
-        due_date: dueDate,
+        status: status, // Possible values: "available", "reserved", "borrowed"
+        price: price,
+        adminId: adminId,
       },
+      
     });
+
 
     if (!newBook) {
       return res
         .status(400)
         .json({ status: 400, message: "Book was not created!" });
     }
-
+    
     res
       .status(200)
       .json({ status: 200, message: "Book successfully created!" });
+
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
 
-
+// update book
 router.put("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
-  const { title, author, isAvailable, dueDate } = req.body;
+  const { title,  status, price, adminId } = req.body;
 
   try {
     const updatedBook = await prisma.book.update({
@@ -77,9 +85,9 @@ router.put("/:id", authenticate, async (req, res) => {
       },
       data: {
         title: title,
-        author: author,
-        is_available: isAvailable,
-        due_date: dueDate,
+        status: status, // Possible values: "available", "reserved", "borrowed"
+        price: price,
+        adminId: adminId,
       },
     });
 
@@ -95,15 +103,14 @@ router.put("/:id", authenticate, async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
-}
-);
+});
 
-
+// delete book
 router.delete("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deletedBook = await prisma.book.delete({
+    const deletedBook = await prisma.books.delete({
       where: {
         id: Number(id),
       },
@@ -122,14 +129,5 @@ router.delete("/:id", authenticate, async (req, res) => {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
-
-
-
-
-
-
-
-
-
 
 export default router;

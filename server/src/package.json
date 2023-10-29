@@ -21,6 +21,6 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "prisma": "^5.5.1"
+    "prisma": "^5.5.2"
   }
 }
