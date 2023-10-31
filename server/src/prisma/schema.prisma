@@ -7,8 +7,9 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      =  env("DATABASE_URL")
 }
+
 
 model Admin {
   id       Int    @id @default(autoincrement())
@@ -22,19 +23,52 @@ model Admin {
   books Book[]
 }
 
-model Book {
-  id        Int     @id @default(autoincrement())
-  title     String
-  image     String
-  author    String
-  year      Int
-  price     Int
-  available Boolean @default(true)
+model Customer {
+  id    Int    @id @default(autoincrement())
+  name  String
+  username String  @unique// Add the username field
 
+  borrwing Borrowing[]
+}
+
+// Define your models
+model Book {
+  id      Int    @id @default(autoincrement())
+  title   String
+  status  String
+  price   Float
   adminId Int
+
+  created  DateTime    @default(now())
+  updated  DateTime    @default(now())
+  admin    Admin       @relation(fields: [adminId], references: [id])
+  borrwing Borrowing[]
+}
+
+model Borrowing {
+  id         Int       @id @default(autoincrement())
+  bookId     Int
+  customerId Int
+  borrowedAt DateTime
+  returnedAt DateTime?
+
+  created  DateTime @default(now())
+  updated  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  book     Book     @relation(fields: [bookId], references: [id])
+
+  transaction Transaction[]
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+
+  borrowingId Int
+  amount      Float
 
   created DateTime @default(now())
   updated DateTime @default(now())
 
-  admin Admin @relation(fields: [adminId], references: [id])
+  borrowing Borrowing @relation(fields: [borrowingId], references: [id])
 }
