@@ -38,80 +38,79 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create a new book
 router.post("/", authenticate, async (req, res) => {
-  const { title, status, price, adminId } = req.body;
-
-  console.log(req.body);
-
   try {
+    const { title, image, author, year, available, adminId, price } = req.body;
+
     const newBook = await prisma.book.create({
       data: {
-        title: title,
-        status: status, // Possible values: "available", "reserved", "borrowed"
-        price: price,
-        adminId: adminId,
+        title,
+        image,
+        author,
+        year,
+        available,
+        adminId,
+        price,
       },
     });
 
     if (!newBook) {
       return res
         .status(400)
-        .json({ status: 400, message: "Book was not created!" });
+        .json({ status: 400, messsage: "Book was not created!" });
     }
+
     res
       .status(200)
-      .json({ status: 200, message: "Book successfully created!" , data: newBook});
+      .json({ status: 200, message: "Book successFully created!" });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
 
-// update book
 router.put("/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-  const { title, status, price, adminId } = req.body;
-
   try {
-    const updatedBook = await prisma.book.update({
+    const { id } = req.params;
+    const { title, image, author, year, available, adminId } = req.body;
+
+    const updateBook = await prisma.book.update({
       where: {
         id: Number(id),
       },
-      data: {
-        title: title,
 
-        status: status, // Possible values: "available", "reserved", "borrowed"
-        price: price,
-        adminId: adminId,
+      data: {
+        title,
+        image,
+        author,
+        year,
+        available,
+        adminId,
       },
     });
 
-    if (!updatedBook) {
+    if (!updateBook) {
       return res
         .status(400)
         .json({ status: 400, message: "Book was not updated!" });
     }
 
-    res
-      .status(200)
-      .json({ status: 200, message: "Book successfully updated!" , data: updatedBook });
+    res.status(200).json({ status: 200, message: "Book successFully update" });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
 
-// delete book
 router.delete("/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const deletedBook = await prisma.books.delete({
+    const { id } = req.params;
+
+    const deleteBook = await prisma.book.delete({
       where: {
         id: Number(id),
       },
     });
 
-    if (!deletedBook) {
+    if (!deleteBook) {
       return res
         .status(400)
         .json({ status: 400, message: "Book was not deleted!" });
@@ -119,7 +118,7 @@ router.delete("/:id", authenticate, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "Book successfully deleted!" });
+      .json({ status: 200, message: `Book ${id} successFully deleted` });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }

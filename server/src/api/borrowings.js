@@ -10,9 +10,7 @@ router.get("/", async (req, res) => {
   try {
     const borrowing = await prisma.borrowing.findMany();
     if (borrowing.length === 0) {
-      return res
-        .status(404)
-        .json({ status: 404, message: "Borrowing not found!" });
+      return res.status(404).json({ status: 404, message: "Borrowing not found!" });
     }
 
     res.json(borrowing);
@@ -33,9 +31,7 @@ router.get("/:id", async (req, res) => {
     });
 
     if (!borrowing) {
-      return res
-        .status(404)
-        .json({ status: 404, message: "Borrowing not found" });
+      return res.status(404).json({ status: 404, message: "Borrowing not found" });
     }
 
     res.json(borrowing);
@@ -46,15 +42,19 @@ router.get("/:id", async (req, res) => {
 
 // create a new borrowing
 router.post("/", authenticate, async (req, res) => {
-  const { bookId, customerId } = req.body;
+  const {
+    bookId     ,
+    customerId ,
+    borrowedAt ,
+    returnedAt } = req.body;
 
   try {
     const newBorrowing = await prisma.borrowing.create({
       data: {
-        bookId: bookId,
-        customerId: customerId,
-        borrowedAt: new Date().toISOString(),
-        returnedAt: new Date().toISOString()
+        bookId:  bookId  ,
+        customerId: customerId ,
+        borrowedAt: borrowedAt ,
+        returnedAt: returnedAt,
       },
     });
 
@@ -66,7 +66,7 @@ router.post("/", authenticate, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "Borrowing successfully created!"  , data: newBorrowing});
+      .json({ status: 200, message: "Borrowing successfully created!" });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
@@ -74,7 +74,7 @@ router.post("/", authenticate, async (req, res) => {
 
 router.put("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
-  const { bookId, customerId, borrowedAt, returnedAt } = req.body;
+  const { bookId, customerId, borrowedAt, returnedAt  } = req.body;
 
   try {
     const updatedBorrowing = await prisma.borrowing.update({
@@ -82,9 +82,9 @@ router.put("/:id", authenticate, async (req, res) => {
         id: Number(id),
       },
       data: {
-        bookId: bookId,
-        customerId: customerId,
-        borrowedAt: borrowedAt,
+        bookId:  bookId  ,
+        customerId: customerId ,
+        borrowedAt: borrowedAt ,
         returnedAt: returnedAt,
       },
     });
@@ -97,7 +97,7 @@ router.put("/:id", authenticate, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "Borrowing successfully updated!" , data: updatedBorrowing});
+      .json({ status: 200, message: "Borrowing successfully updated!" });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
