@@ -1,11 +1,12 @@
 import express from "express";
 import prisma from "./lib/index.js";
+import authenticate from "./middleware/index.js";
 
 const router = express.Router();
 
 // get all transactions
 
-router.get("/", async (req, res) => {
+router.get("/" , authenticate, async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany();
     if (transactions.length === 0) {
@@ -21,7 +22,7 @@ router.get("/", async (req, res) => {
 });
 
 // get transaction by id
-router.get("/id", async (req, res) => {
+router.get("/id", authenticate, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -45,7 +46,7 @@ router.get("/id", async (req, res) => {
 
 // create new transaction
 
-router.post("/", async (req, res) => {
+router.post("/" , authenticate, async (req, res) => {
   const { borrowingId, amount } = req.body;
 
   try {
@@ -71,7 +72,7 @@ router.post("/", async (req, res) => {
 });
 
 // update transaction
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
   const { borrowingId, amount } = req.body;
 
@@ -101,7 +102,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // delete transaction
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {

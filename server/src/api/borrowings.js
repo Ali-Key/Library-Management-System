@@ -6,7 +6,7 @@ import authenticate from "./middleware/index.js";
 const router = express.Router();
 
 // get all borrowing customer or books
-router.get("/", async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const borrowing = await prisma.borrowing.findMany();
     if (borrowing.length === 0) {
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 });
 
 // get by id
-router.get("/:id", async (req, res) => {
+router.get("/:id" , authenticate,async (req, res) => {
   try {
     const { id } = req.params;
 
