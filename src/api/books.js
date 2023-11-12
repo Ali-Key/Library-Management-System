@@ -19,7 +19,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
   }
 });
 
-router.get("/:id", authenticateAdmin , async (req, res) => {
+router.get("/:id", authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -46,7 +46,7 @@ router.post("/", authenticateAdmin, async (req, res) => {
     const newBook = await prisma.book.create({
       data: {
         title: title,
-        status: status,
+        status: status, // "available , borrowed and reserved" default is available
         price: price,
         adminId: adminId,
       },
@@ -60,7 +60,7 @@ router.post("/", authenticateAdmin, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "Book successFully created!" , newBook });
+      .json({ status: 200, message: "Book successFully created!", newBook });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
@@ -90,7 +90,9 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
         .json({ status: 400, message: "Book was not updated!" });
     }
 
-    res.status(200).json({ status: 200, message: "Book successFully update" , updateBook });
+    res
+      .status(200)
+      .json({ status: 200, message: "Book successFully update", updateBook });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
