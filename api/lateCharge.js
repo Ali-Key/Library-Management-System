@@ -56,11 +56,11 @@ router.post("/", authenticateAdmin, async (req, res) => {
     if (!newLateCharge) {
       return res
         .status(400)
-        .json({ status: 400, messsage: "lateCharge was not created!", newLateCharge });
+        .json({ status: 400, messsage: "lateCharge was not created!" , newLateCharge });
     }
     res
       .status(200)
-      .json({ status: 200, message: "lateCharge successFully created!" , newLateCharge });
+      .json({ status: 200, message: "lateCharge successFully created!"  });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }

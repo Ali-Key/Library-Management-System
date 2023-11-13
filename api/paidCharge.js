@@ -70,7 +70,7 @@ router.put("/:id", authenticateCustomer, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "paidCharge updated", updatePaidCharge });
+      .json({ status: 200, message: "paidCharge updated" });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
