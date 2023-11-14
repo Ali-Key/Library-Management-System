@@ -1,11 +1,12 @@
-// Create endpoints for books, make sure to use the middleware to authenticate the token
+// Create endpoints for books, make sure to use the middleware to authenticateAdmin the token
 import express from "express";
 import prisma from "./lib/index.js";
-import authenticate from "./middleware/index.js";
+import authenticateAdmin from "./middleware/admin.js";
+import authenticateCustomer from "./middleware/customer.js";
 
 const router = express.Router();
-
-router.get("/", async (req, res) => {
+ 
+router.get("/", authenticateAdmin, authenticateCustomer,  async (req, res) => {
   try {
     const books = await prisma.book.findMany();
     if (books.length === 0) {
@@ -18,7 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticateAdmin, authenticateCustomer,async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -38,19 +39,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", authenticate, async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
   try {
-    const { title, image, author, year, available, adminId, price } = req.body;
+    const { title, status, price, adminId } = req.body;
 
     const newBook = await prisma.book.create({
       data: {
-        title,
-        image,
-        author,
-        year,
-        available,
-        adminId,
-        price,
+        title: title,
+        status: status, // "available , borrowed and reserved" default is available
+        price: price,
+        adminId: adminId,
       },
     });
 
@@ -62,16 +60,16 @@ router.post("/", authenticate, async (req, res) => {
 
     res
       .status(200)
-      .json({ status: 200, message: "Book successFully created!" });
+      .json({ status: 200, message: "Book successFully created!", newBook });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
 
-router.put("/:id", authenticate, async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, image, author, year, available, adminId } = req.body;
+    const { title, status, price, adminId } = req.body;
 
     const updateBook = await prisma.book.update({
       where: {
@@ -79,12 +77,10 @@ router.put("/:id", authenticate, async (req, res) => {
       },
 
       data: {
-        title,
-        image,
-        author,
-        year,
-        available,
-        adminId,
+        title: title,
+        status: status,
+        price: price,
+        adminId: adminId,
       },
     });
 
@@ -94,13 +90,15 @@ router.put("/:id", authenticate, async (req, res) => {
         .json({ status: 400, message: "Book was not updated!" });
     }
 
-    res.status(200).json({ status: 200, message: "Book successFully update" });
+    res
+      .status(200)
+      .json({ status: 200, message: "Book successFully update", updateBook });
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message });
   }
 });
 
-router.delete("/:id", authenticate, async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 

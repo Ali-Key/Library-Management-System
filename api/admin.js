@@ -8,6 +8,7 @@ import "dotenv/config.js"
 const SECRET_KEY = "secret_Key";
 const router = express.Router();
 
+// sign up admin 
 router.post('/signup', async (req, res) => {
     const {name, email, password} = req.body
 
@@ -25,7 +26,7 @@ router.post('/signup', async (req, res) => {
 
         const hashePassword = await bcrypt.hash(password, 10)
 
-        const newOwner = await prisma.admin.create({
+        const newAdmin = await prisma.admin.create({
             data: {
                 name: name,
                 email: email,
@@ -33,13 +34,15 @@ router.post('/signup', async (req, res) => {
             }
         })
 
-        res.status(201).json({status: 201, message: "Admin created successFully", newOwner})
+        res.status(201).json({status: 201, message: "Admin created successFully", newAdmin})
 
     } catch (error) {
         res.status(500).json({status: 500, message: "Something went wrong", error: error.message})
     }
 })
 
+
+// login admin
 router.post("/login", async (req, res) => {
     const {email, password} = req.body
 
@@ -64,7 +67,10 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign(
             {id: existingAdmin.id, email: existingAdmin.email},
             SECRET_KEY,
-            {expiresIn: "1h"}
+
+
+            {expiresIn: "7d"}
+         
         )
 
         res.status(200).json({status: 200, message: "Admin logged in successfully", token})
