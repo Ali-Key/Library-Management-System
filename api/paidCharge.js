@@ -65,7 +65,7 @@ router.put("/:id", authenticateCustomer, async (req, res) => {
     if (!updatePaidCharge) {
       return res
         .status(400)
-        .json({ status: 400, messsage: "paidCharge was not updated!" });
+        .json({ status: 400, messsage: "paidCharge was not updated!" , updatePaidCharge });
     }
 
     res

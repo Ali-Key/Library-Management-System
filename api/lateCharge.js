@@ -56,7 +56,7 @@ router.post("/", authenticateAdmin, async (req, res) => {
     if (!newLateCharge) {
       return res
         .status(400)
-        .json({ status: 400, messsage: "lateCharge was not created!"  });
+        .json({ status: 400, messsage: "lateCharge was not created!"  , newLateCharge });
     }
     res
       .status(200)
